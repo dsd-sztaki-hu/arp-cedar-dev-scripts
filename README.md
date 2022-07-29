@@ -86,3 +86,31 @@ https://metadatacenter.readthedocs.io/en/latest/install-docker-eval/eval-users/
 
 Infra service users:
 https://metadatacenter.readthedocs.io/en/latest/install-docker-eval/eval-component-urls/
+
+## Start/stop scripts
+
+Once devinstall.sh has been run successfully you can see the list of services using:
+
+    ceddock # or ceddev
+    cedarss
+
+To stop both infra and microservices:
+
+    ./devstop.sh
+
+Stop just infra:
+
+    ./infrastop.sh
+
+Stop just microservcies:
+
+    ./microstop.sh
+
+Sarting up infra + microservices:
+
+    ./devstart.sh
+
+Starting infra and microservices separately in two terminals:
+
+    ./infrastart.sh
+    ./microstart.sh
