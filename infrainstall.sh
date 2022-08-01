@@ -70,7 +70,8 @@ export CEDAR_FRONTEND_HOST=host.docker.internal
 (cd ${CEDAR_DOCKER_HOME}/cedar-docker-deploy/cedar-infrastructure
 docker-compose down -v; \
 docker image rm `docker image ls | grep cedar | awk '{print $3}'`; \
-source ${CEDAR_DOCKER_DEPLOY}/bin/docker-create-volumes.sh && \
+source ${CEDAR_DOCKER_DEPLOY}/bin/docker-create-network.sh; \
+source ${CEDAR_DOCKER_DEPLOY}/bin/docker-create-volumes.sh; \
 source ${CEDAR_DOCKER_DEPLOY}/bin/docker-copy-certificates.sh)
 
 #printf "\n\n+++++ Starting cedar infrastructure\n\n"

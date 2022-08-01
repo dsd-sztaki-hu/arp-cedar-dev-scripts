@@ -21,7 +21,7 @@ esac
 
 export CEDAR_DOCKER_HOME=${HOME}/CEDAR_DOCKER
 export CEDAR_HOME=${HOME}/CEDAR
-export $CEDAR_BIOPORTAL_API_KEY_CONFIGURED="changeme-bbbb-cccc-dddd-eeeeeeeeeeee"
+export CEDAR_BIOPORTAL_API_KEY_CONFIGURED="changeme-bbbb-cccc-dddd-eeeeeeeeeeee"
 #CEDAR_DOCKER_HOME=./CEDAR_DOCKER
 #CEDAR_HOME=./CEDAR
 
