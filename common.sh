@@ -20,6 +20,7 @@ alias ceddev="source ${CEDAR_HOME}/cedar-profile-native-develop.sh"
 
 # $1: space separated list of services to check for
 function checkss {
+  echo "checkss param: $1"
   IFS=" "
   WAITING_FOR=""
   SERVICES=`cedarss`

@@ -8,5 +8,5 @@
 source ./common.sh
 
 ./infrastart.sh
-./microstart.sh
+./microstart.sh "$@"
 cedarss

@@ -111,9 +111,9 @@ Stop just microservcies:
 
 Sarting up infra + microservices:
 
-    ./devstart.sh
+    ./devstart.sh [micro services to ignore]
 
 Starting infra and microservices separately in two terminals:
 
     ./infrastart.sh
-    ./microstart.sh
+    ./microstart.sh [micro services to ignore]
