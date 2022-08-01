@@ -11,6 +11,9 @@ ceddev
 
 cedarenv
 
+# ceddev sets it to default value, but we override it with our configured value
+export CEDAR_BIOPORTAL_API_KEY=$CEDAR_BIOPORTAL_API_KEY_CONFIGURED
+
 printf "\n+++++ Starting all CEDAR microservices for configuration\n\n"
 
 ( startall ) &

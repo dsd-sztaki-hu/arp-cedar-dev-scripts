@@ -38,7 +38,10 @@ The script will ask for 3 values:
 
 - CEDAR_DOCKER_HOME: ${HOME}/CEDAR_DOCKER
 - CEDAR_HOME: ${HOME}/CEDAR
+- CEDAR_BIOPORTAL_API_KEY_CONFIGURED: <empty>
 - PLATFORM: intel or arm
+
+Note: CEDAR_BIOPORTAL_API_KEY_CONFIGURED will override the CEDAR_BIOPORTAL_API_KEY value provided by `ceddev` command and it needs to be a value API KEY to https://bioportal.bioontology.org
 
 The files necessary for the installation will be downloaded to CEDAR_DOCKER_HOME and CEDAR_HOME and will use the appropriate branch to match the PLATFORM.
 
