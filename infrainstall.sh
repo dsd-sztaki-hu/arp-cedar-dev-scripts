@@ -3,6 +3,10 @@
 # Installs the infra in docker. Called from devinstall.sh.
 #
 
+# Remember where we started
+CURRDIR=`dirname "$0"`
+CURRDIR=`realpath $CURRDIR`
+
 source ./common.sh
 
 # We will use these aliases to configure approriate env vars for dev/docker environments
@@ -43,7 +47,7 @@ if [[ `yes changeit | keytool -list -alias metadatacenter.orgx -keystore ${JAVA_
   printf "\n\n+++++ Docker configuration's ca.crt already installed in ${JAVA_HOME}/lib/security/cacerts\n\n"
 else
   printf "\n\n+++++ Installing docker configuration's ca.crt in ${JAVA_HOME}/lib/security/cacerts\n\n"
-  godeploy
+  cd $CEDAR_DOCKER_HOME/cedar-docker-deploy
   cd cedar-assets/ca/
   # pass: changeit
   printf 'changeit\nyes\n' | keytool -import -alias metadatacenter.orgx -file ./ca.crt -keystore ${JAVA_HOME}/lib/security/cacerts
@@ -105,4 +109,5 @@ source ${CEDAR_DOCKER_DEPLOY}/bin/docker-copy-certificates.sh)
 #    exit -1
 #fi
 
+cd $CURRDIR
 ./infrastart.sh
