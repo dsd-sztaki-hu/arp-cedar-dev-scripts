@@ -59,6 +59,10 @@ fi
 
 ceddock
 
+# Add *.metadatacenter.orgx hosts to /etc/hosts
+echo "++++ Adding  *.metadatacenter.orgx hosts to /etc/hosts"
+${CEDAR_DEVELOP_HOME}/bin/util/add-hosts.sh
+
 # This is to have job control
 set -m
 
