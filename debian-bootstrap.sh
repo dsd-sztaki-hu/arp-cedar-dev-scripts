@@ -10,6 +10,8 @@ echo \
   $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
 
 apt update
-apt install netcat git docker-ce docker-ce-cli containerd.io docker-compose-plugin nodejs
+apt install netcat git docker-ce docker-ce-cli containerd.io docker-compose-plugin nodejs default-jdk-headless maven
 [ -L /usr/local/bin/docker-compose ] || ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin/
 apt install --no-install-recommends npm
+
+sysctl vm.max_map_count=262144

@@ -71,9 +71,17 @@ printf "\n\n+++++ Rebuilding images and resetting volumes\n\n"
 # Env vars that affect image creation.  host.docker.internal host name, for example, are used by nginx
 # to decide where to proxy requests. Since the microservices run outside the container
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
-export CEDAR_MICROSERVICE_HOST=host.docker.internal
-export CEDAR_KEYCLOAK_HOST=host.docker.internal
-export CEDAR_FRONTEND_HOST=host.docker.internal
+
+if [ `uname` = "Linux" ]
+then
+	DOCKER_HOST=172.17.0.1
+else
+	DOCKER_HOST=host.docker.internal
+fi
+
+export CEDAR_MICROSERVICE_HOST=$DOCKER_HOST
+export CEDAR_KEYCLOAK_HOST=$DOCKER_HOST
+export CEDAR_FRONTEND_HOST=$DOCKER_HOST
 
 (cd ${CEDAR_DOCKER_HOME}/cedar-docker-deploy/cedar-infrastructure
 docker-compose down -v; \
