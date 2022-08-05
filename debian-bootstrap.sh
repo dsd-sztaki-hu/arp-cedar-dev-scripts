@@ -14,4 +14,5 @@ apt install netcat git docker-ce docker-ce-cli containerd.io docker-compose-plug
 [ -L /usr/local/bin/docker-compose ] || ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin/
 apt install --no-install-recommends npm
 
-sysctl vm.max_map_count=262144
+[ -f /etc/sysctl.d/90-cedar.conf ] || (echo vm.max_map_count=262144 > /etc/sysctl.d/90-cedar.conf)
+sysctl --load=/etc/sysctl.d/90-cedar.conf
