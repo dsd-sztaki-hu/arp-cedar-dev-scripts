@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -e
 #
 # Stops the CEDAR infra environment started for development purposes.
 #

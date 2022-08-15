@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -e
 #
 # ARP specific development installation of CEDAR.
 #
@@ -22,6 +22,7 @@ esac
 export CEDAR_DOCKER_HOME=${HOME}/CEDAR_DOCKER
 export CEDAR_HOME=${HOME}/CEDAR
 export CEDAR_BIOPORTAL_API_KEY_CONFIGURED="changeme-bbbb-cccc-dddd-eeeeeeeeeeee"
+export CEDAR_HOST="metadatacenter.orgx"
 #CEDAR_DOCKER_HOME=./CEDAR_DOCKER
 #CEDAR_HOME=./CEDAR
 
@@ -29,6 +30,15 @@ export CEDAR_BIOPORTAL_API_KEY_CONFIGURED="changeme-bbbb-cccc-dddd-eeeeeeeeeeee"
 if [[ -f "./.env.sh" ]]; then
   source ./.env.sh
 fi
+
+echo -n "CEDAR_HOST ($CEDAR_HOST): "
+read CEDAR_HOST_INPUT
+
+if [ ! -z "$CEDAR_HOST_INPUT" ]
+then
+  CEDAR_HOST=$CEDAR_HOST_INPUT
+fi
+echo 'CEDAR_HOST': $CEDAR_HOST
 
 # 1. Determine $CEDAR_DOCKER_HOME
 
@@ -78,6 +88,7 @@ export CEDAR_HOME=`realpath $CEDAR_HOME`
 
 # Dump the latest env vars to .env.sh so that the next time we run the script, we will have these as defaults
 cat > .env.sh << END
+export CEDAR_HOST=$CEDAR_HOST
 export CEDAR_DOCKER_HOME=$CEDAR_DOCKER_HOME
 export CEDAR_HOME=$CEDAR_HOME
 export CEDAR_BIOPORTAL_API_KEY_CONFIGURED=$CEDAR_BIOPORTAL_API_KEY_CONFIGURED
@@ -85,8 +96,17 @@ export PLATFORM=$PLATFORM
 export BRANCH=arp-$PLATFORM
 END
 
+echo "++++ Setting CEDAR_HOST to $CEDAR_HOST in ${CEDAR_HOME}/set-env-internal.sh"
+perl -pi -e 's/export CEDAR_HOST=.*/export CEDAR_HOST='$CEDAR_HOST'/g' ${CEDAR_HOME}/set-env-internal.sh
 
-# Generate .bashrc comands
+echo "++++ Setting CEDAR_HOST to $CEDAR_HOST in ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/set-env-internal.sh"
+perl -pi -e 's/export CEDAR_HOST=.*/export CEDAR_HOST='$CEDAR_HOST'/g' ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/set-env-internal.sh
+
+echo "++++ Updating redirectUris and webOrigins in ${CEDAR_DOCKER_HOME}/cedar-docker-build/cedar-keycloak/config/keycloak-realm.CEDAR.development.20201020.json"
+perl -pi -e 's|"redirectUris" : \[ "http://cedar.metadatacenter.orgx/.*|"redirectUris" : [ "http://cedar.metadatacenter.orgx/*", "https://cedar.metadatacenter.orgx/*", "http://cedar.'$CEDAR_HOST'/*", "https://cedar.'$CEDAR_HOST'/*"],|g' ${CEDAR_DOCKER_HOME}/cedar-docker-build/cedar-keycloak/config/keycloak-realm.CEDAR.development.20201020.json
+perl -pi -e 's|"webOrigins" : \[ "https://cedar.metadatacenter.orgx.*|"webOrigins" : [ "https://cedar.metadatacenter.orgx", "http://cedar.metadatacenter.orgx", "http://cedar.'$CEDAR_HOST'", "https://cedar.'$CEDAR_HOST'"],|g' ${CEDAR_DOCKER_HOME}/cedar-docker-build/cedar-keycloak/config/keycloak-realm.CEDAR.development.20201020.json
+
+# Generate .bashrc commands
 cat << END
 
 

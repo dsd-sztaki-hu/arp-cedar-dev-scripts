@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -e
 #
 # Starts the CEDAR microservices for development purposes.
 #

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -e
 #
 # Stops the CEDAR development environment (infra + microservices).
 #

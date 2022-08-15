@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -e
 #
 # Builds and configures the CEDAR microservices. Called from devinstall.sh.
 #

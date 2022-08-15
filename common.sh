@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -e
 #
 # Common env vars and function
 #
@@ -7,9 +7,6 @@
 if [[ -f "./.env.sh" ]]; then
   source ./.env.sh
 fi
-
-export CEDAR_DOCKER_HOME=`realpath $CEDAR_DOCKER_HOME`
-export CEDAR_HOME=`realpath $CEDAR_HOME`
 
 # During initial runs of devinstall.sh these aliases are not yet added to .bashrc
 # So here we define them. Then if the scripts are run after these are added to .bashrc
