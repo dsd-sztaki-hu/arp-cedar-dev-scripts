@@ -1,4 +1,4 @@
-#!/usr/bin/env bash -e
+#!/usr/bin/env -S bash -e
 #
 # ARP specific development installation of CEDAR.
 #
@@ -96,8 +96,13 @@ export PLATFORM=$PLATFORM
 export BRANCH=arp-$PLATFORM
 END
 
+
+
 echo "++++ Setting CEDAR_HOST to $CEDAR_HOST in ${CEDAR_HOME}/set-env-internal.sh"
-perl -pi -e 's/export CEDAR_HOST=.*/export CEDAR_HOST='$CEDAR_HOST'/g' ${CEDAR_HOME}/set-env-internal.sh
+perl -pi -e 's/export CEDAR_HOST=.*/export CEDAR_HOST='$CEDAR_HOST'/g' ${CEDAR_HOME}/set-env-internal.sh ${CEDAR_HOME}/cedar-development/bin/templates/set-env-internal.sh
+
+echo "++++ Setting CEDAR_HOST to $CEDAR_HOST in ${CEDAR_HOME}/*/.travis.yml"
+perl -pi -e 's/  - CEDAR_HOST=.*/  - CEDAR_HOST='$CEDAR_HOST'/g'  ${CEDAR_HOME}/*/.travis.yml
 
 echo "++++ Setting CEDAR_HOST to $CEDAR_HOST in ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/set-env-internal.sh"
 perl -pi -e 's/export CEDAR_HOST=.*/export CEDAR_HOST='$CEDAR_HOST'/g' ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/set-env-internal.sh
