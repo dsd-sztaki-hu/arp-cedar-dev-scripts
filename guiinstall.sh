@@ -16,4 +16,4 @@ npm install
 
 echo "starting frontend"
 goeditor
-gulp
+gulp &

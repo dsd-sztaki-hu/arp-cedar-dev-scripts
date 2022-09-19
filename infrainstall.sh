@@ -14,35 +14,6 @@ shopt -s expand_aliases
 alias ceddock="source ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/cedar-profile-docker-eval-1.sh; source ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/cedar-profile-docker-eval-2.sh"
 alias ceddev="source ${CEDAR_HOME}/cedar-profile-native-develop.sh"
 
-# Create missing directories
-if [ ! -d "$CEDAR_DOCKER_HOME" ]
-then
-  printf "\n\n+++++ Creating $CEDAR_DOCKER_HOME directory\n\n"
-  mkdir "$CEDAR_DOCKER_HOME"
-
-  echo "+++++ Cloning cedar-docker-build with branch $BRANCH"
-  cd ${CEDAR_DOCKER_HOME}
-  git clone git@github.com:dsd-sztaki-hu/cedar-docker-build.git
-  cd cedar-docker-build
-  git checkout $BRANCH
-
-  echo "+++++ Cloning cedar-docker-deploy with branch $BRANCH"
-  cd ${CEDAR_DOCKER_HOME}
-  git clone git@github.com:dsd-sztaki-hu/cedar-docker-deploy.git
-  cd cedar-docker-deploy
-  git checkout $BRANCH
-
-  echo "+++++ Cloning cedar-development"
-  cd ${CEDAR_DOCKER_HOME}
-  git clone git@github.com:metadatacenter/cedar-development.git
-  cd cedar-development
-  git checkout master
-
-  printf "\n\n"
-else
-  echo "$CEDAR_DOCKER_HOME already exists"
-fi
-
 # Add *.$CEDAR_HOST hosts to /etc/hosts
 ceddev
 echo "++++ Adding  *.$CEDAR_HOST hosts to /etc/hosts"

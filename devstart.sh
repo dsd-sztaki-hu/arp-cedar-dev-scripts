@@ -9,4 +9,5 @@ source ./common.sh
 
 ./infrastart.sh
 ./microstart.sh "$@"
+./guiinstall.sh &
 cedarss

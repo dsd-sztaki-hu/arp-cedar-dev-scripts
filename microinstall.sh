@@ -14,37 +14,6 @@ shopt -s expand_aliases
 alias ceddock="source ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/cedar-profile-docker-eval-1.sh; source ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/cedar-profile-docker-eval-2.sh"
 alias ceddev="source ${CEDAR_HOME}/cedar-profile-native-develop.sh"
 
-if [ ! -d "$CEDAR_HOME" ]
-then
-  echo "Creating $CEDAR_HOME directory"
-  mkdir "$CEDAR_HOME"
-
-  printf "\n\n++++ Cloning microservice repos"
-  cd ${CEDAR_HOME}
-  git clone https://github.com/metadatacenter/cedar-development
-  cd cedar-development
-  # Maybe develop branch
-  git checkout master
-  cd ..
-  cp cedar-development/bin/templates/set-env-internal.sh .
-  cp cedar-development/bin/templates/set-env-external.sh .
-  cp cedar-development/bin/templates/cedar-profile-native-develop.sh .
-
-  echo adsasdadsa $CEDAR_DEVELOP_HOME
-
-  # source it now to have gocedar
-  shopt -s expand_aliases
-  source ${CEDAR_HOME}/cedar-profile-native-develop.sh
-  # gocedar should work here instead of the 'cd' but it doesn't
-  cd ${CEDAR_HOME}
-  echo ${CEDAR_DEVELOP_HOME}/bin/util/git/git-clone-all.sh
-  ${CEDAR_DEVELOP_HOME}/bin/util/git/git-clone-all.sh
-  # Maybe develop branch
-  cedargcheckout master
-else
-  echo "$CEDAR_HOME already exists"
-fi
-
 printf "\n+++++ Adding microservice mysql users: cedarMySQLMessagingUser, cedarMySQLLogUser\n\n"
 
 # docker run -it --network cedarnet --rm mysql mysql --host=mysql -uroot --port=3306 --protocol=TCP -pchangeme

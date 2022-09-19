@@ -26,10 +26,15 @@ export CEDAR_HOST="metadatacenter.orgx"
 #CEDAR_DOCKER_HOME=./CEDAR_DOCKER
 #CEDAR_HOME=./CEDAR
 
-# If we have previously set the value for above, load them from .env.sh as the defaults
+# If we have previously set the value for the above, load them from .env.sh as the defaults
 if [[ -f "./.env.sh" ]]; then
   source ./.env.sh
+  # Remember old values, so that if anything changes in ./.env.sh we remove these dirs and start all over
+  OLD_ENV_SH=`cat ./.env.sh`
+  OLD_CEDAR_DOCKER_HOME=$CEDAR_DOCKER_HOME
+  OLD_CEDAR_HOME=$CEDAR_HOME
 fi
+
 
 echo -n "CEDAR_HOST ($CEDAR_HOST): "
 read CEDAR_HOST_INPUT
@@ -96,6 +101,89 @@ export PLATFORM=$PLATFORM
 export BRANCH=arp-$PLATFORM
 END
 
+if [ ! -z "$OLD_ENV_SH" ]
+then
+  NEW_ENV_SH=`cat ./.env.sh`
+  if [ "$OLD_ENV_SH" !=  "$NEW_ENV_SH" ]
+  then
+    printf "\n\n++++ WARNING: .env.sh changed, need to reset installation. This will remove the following directories"
+    printf "\n++++ $OLD_CEDAR_DOCKER_HOME"
+    printf "\n++++ $OLD_CEDAR_HOME"
+    printf "\n++++ Proceed (y/N)? : "
+    read YES_OR_NO_INPUT
+    if [ -z "$YES_OR_NO_INPUT" ] || [ "$YES_OR_NO_INPUT" != "y" ]
+    then
+      echo "++++ Directories kept. Running ./devinstall.sh again may result in a wrong installation, so you should remove these directories before rerunning the script"
+    else
+        rm -rf $OLD_CEDAR_DOCKER_HOME
+        rm -rf $OLD_CEDAR_HOME
+    fi
+  fi
+fi
+
+# Clone $CEDAR_DOCKER_HOME and $CEDAR_HOME if not already cloned
+if [ ! -d "$CEDAR_DOCKER_HOME" ]
+then
+  printf "\n\n+++++ Creating $CEDAR_DOCKER_HOME directory\n\n"
+  mkdir "$CEDAR_DOCKER_HOME"
+
+  echo "+++++ Cloning cedar-docker-build with branch $BRANCH"
+  cd ${CEDAR_DOCKER_HOME}
+  git clone git@github.com:dsd-sztaki-hu/cedar-docker-build.git
+  cd cedar-docker-build
+  git checkout $BRANCH
+
+  echo "+++++ Cloning cedar-docker-deploy with branch $BRANCH"
+  cd ${CEDAR_DOCKER_HOME}
+  git clone git@github.com:dsd-sztaki-hu/cedar-docker-deploy.git
+  cd cedar-docker-deploy
+  git checkout $BRANCH
+
+  echo "+++++ Cloning cedar-development"
+  cd ${CEDAR_DOCKER_HOME}
+  git clone git@github.com:metadatacenter/cedar-development.git
+  cd cedar-development
+  git checkout master
+
+  printf "\n\n"
+else
+  echo "$CEDAR_DOCKER_HOME already exists"
+fi
+
+if [ ! -d "$CEDAR_HOME" ]
+then
+  echo "Creating $CEDAR_HOME directory"
+  mkdir "$CEDAR_HOME"
+
+  printf "\n\n++++ Cloning microservice repos"
+  cd ${CEDAR_HOME}
+  git clone https://github.com/metadatacenter/cedar-development
+  cd cedar-development
+  # Maybe develop branch
+  git checkout master
+  cd ..
+  cp cedar-development/bin/templates/set-env-internal.sh .
+  cp cedar-development/bin/templates/set-env-external.sh .
+  cp cedar-development/bin/templates/cedar-profile-native-develop.sh .
+
+  echo adsasdadsa $CEDAR_DEVELOP_HOME
+
+  # source it now to have gocedar
+  shopt -s expand_aliases
+  source ${CEDAR_HOME}/cedar-profile-native-develop.sh
+  # gocedar should work here instead of the 'cd' but it doesn't
+  cd ${CEDAR_HOME}
+  echo ${CEDAR_DEVELOP_HOME}/bin/util/git/git-clone-all.sh
+  ${CEDAR_DEVELOP_HOME}/bin/util/git/git-clone-all.sh
+  # Maybe develop branch
+  source ${CEDAR_HOME}/cedar-profile-native-develop.sh
+  # cedargcheckout master
+  $CEDAR_UTIL_BIN/git/git-checkout-branch.sh
+else
+  echo "$CEDAR_HOME already exists"
+fi
+
+# Update values in scripts
 echo "++++ Setting CEDAR_HOST to $CEDAR_HOST in ${CEDAR_HOME}/set-env-internal.sh"
 perl -pi -e 's/export CEDAR_HOST=.*/export CEDAR_HOST='$CEDAR_HOST'/g' ${CEDAR_HOME}/set-env-internal.sh
 
@@ -105,6 +193,10 @@ perl -pi -e 's/export CEDAR_HOST=.*/export CEDAR_HOST='$CEDAR_HOST'/g' ${CEDAR_D
 echo "++++ Updating redirectUris and webOrigins in ${CEDAR_DOCKER_HOME}/cedar-docker-build/cedar-keycloak/config/keycloak-realm.CEDAR.development.20201020.json"
 perl -pi -e 's|"redirectUris" : \[ "http://cedar.metadatacenter.orgx/.*|"redirectUris" : [ "http://cedar.metadatacenter.orgx/*", "https://cedar.metadatacenter.orgx/*", "http://cedar.'$CEDAR_HOST'/*", "https://cedar.'$CEDAR_HOST'/*"],|g' ${CEDAR_DOCKER_HOME}/cedar-docker-build/cedar-keycloak/config/keycloak-realm.CEDAR.development.20201020.json
 perl -pi -e 's|"webOrigins" : \[ "https://cedar.metadatacenter.orgx.*|"webOrigins" : [ "https://cedar.metadatacenter.orgx", "http://cedar.metadatacenter.orgx", "http://cedar.'$CEDAR_HOST'", "https://cedar.'$CEDAR_HOST'"],|g' ${CEDAR_DOCKER_HOME}/cedar-docker-build/cedar-keycloak/config/keycloak-realm.CEDAR.development.20201020.json
+
+echo "++++ Updating auth-server-url in ${CEDAR_HOME}/cedar-template-editor/app/keycloak.json"
+perl -pi -e 's#"auth-server-url":.*#"auth-server-url": "https://auth.'$CEDAR_HOST'/auth/",#g' ${CEDAR_HOME}/cedar-template-editor/app/keycloak.json
+
 
 # Generate .bashrc commands
 cat << END
@@ -130,7 +222,8 @@ END
 echo "Press enter after commands added to .bashrc to continue!"
 read PRESSED
 
-
 ./infrainstall.sh
 
 ./microinstall.sh
+
+./guiinstall.sh
