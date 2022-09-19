@@ -1,4 +1,4 @@
-#!/usr/bin/env bash -e
+#!/usr/bin/env -S bash -e
 
 # Remember where we started
 CURRDIR=`dirname "$0"`
