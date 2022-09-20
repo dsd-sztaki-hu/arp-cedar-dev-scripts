@@ -1,5 +1,9 @@
 #!/bin/bash -e
 
+source ./common.sh
+
+check_node_version
+
 shopt -s expand_aliases
 source $CEDAR_HOME/cedar-development/bin/util/set-dev-aliases.sh
 source $CEDAR_HOME/cedar-profile-native-develop.sh

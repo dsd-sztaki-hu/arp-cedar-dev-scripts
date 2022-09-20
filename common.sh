@@ -27,3 +27,30 @@ function checkss {
     fi
   done
 }
+
+function check_node_version {
+  if [[ ! -z "$1" ]]
+  then
+    V=$1
+  else
+    V=12
+  fi
+
+  echo "Checking if node version is: $V"
+  NODE_VERSION=`node -v`
+  REGEX="v$V\."
+  if [[ "$NODE_VERSION" =~ $REGEX ]]; then
+    echo "Node version OK: $NODE_VERSION"
+    echo
+  else
+    echo "Node version expected: $V, got: $NODE_VERSION"
+    exit -1
+  fi
+}
+
+if [ `uname` = "Linux" ]
+then
+	DOCKER_HOST=172.17.0.1
+else
+	DOCKER_HOST=host.docker.internal
+fi

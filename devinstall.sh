@@ -26,9 +26,13 @@ export CEDAR_HOST="metadatacenter.orgx"
 #CEDAR_DOCKER_HOME=./CEDAR_DOCKER
 #CEDAR_HOME=./CEDAR
 
+# Only load ./common.sh now, because it load .env.sh as well
+source ./common.sh
+
+check_node_version
+
 # If we have previously set the value for the above, load them from .env.sh as the defaults
 if [[ -f "./.env.sh" ]]; then
-  source ./.env.sh
   # Remember old values, so that if anything changes in ./.env.sh we remove these dirs and start all over
   OLD_ENV_SH=`cat ./.env.sh`
   OLD_CEDAR_DOCKER_HOME=$CEDAR_DOCKER_HOME
@@ -199,6 +203,13 @@ perl -pi -e 's|"webOrigins" : \[ "https://cedar.metadatacenter.orgx.*|"webOrigin
 
 echo "++++ Updating auth-server-url in ${CEDAR_HOME}/cedar-template-editor/app/keycloak.json"
 perl -pi -e 's#"auth-server-url":.*#"auth-server-url": "https://auth.'$CEDAR_HOST'/auth/",#g' ${CEDAR_HOME}/cedar-template-editor/app/keycloak.json
+
+# Keycloak is the only service, which calls the resource server via CEDAR_NET_GATEWAY in the
+# CEDAR_DOCKER/cedar-docker-build/cedar-keycloak/scripts/tools/listener.cli script.
+# Here we make keycloak to call the Resource server running in the host at ${DOCKER_HOST}:9007. For this we edit
+# listener.cli
+echo "++++ Updating userEventCallbackURL to call Resource server running at ${DOCKER_HOST}:9007 in ${CEDAR_DOCKER_HOME}/cedar-docker-build/cedar-keycloak/scripts/tools/listener.cli"
+perl -pi -e 's#\$\{env.CEDAR_NET_GATEWAY\}#'${DOCKER_HOST}'#g' ${CEDAR_DOCKER_HOME}/cedar-docker-build/cedar-keycloak/scripts/tools/listener.cli
 
 
 # Generate .bashrc commands

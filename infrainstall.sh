@@ -52,20 +52,14 @@ printf "\n\n+++++ Rebuilding images and resetting volumes\n\n"
 # to decide where to proxy requests. Since the microservices run outside the container
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
 
-if [ `uname` = "Linux" ]
-then
-	DOCKER_HOST=172.17.0.1
-else
-	DOCKER_HOST=host.docker.internal
-fi
-
 export CEDAR_MICROSERVICE_HOST=$DOCKER_HOST
 export CEDAR_KEYCLOAK_HOST=$DOCKER_HOST
 export CEDAR_FRONTEND_HOST=$DOCKER_HOST
 
 (cd ${CEDAR_DOCKER_HOME}/cedar-docker-deploy/cedar-infrastructure
 docker-compose down -v; \
-docker image rm `docker image ls | grep cedar | awk '{print $3}'`; \
+CEDAR_IMAGES=`docker image ls | grep cedar | awk '{print $3}'`;
+if [ ! -z "$CEDAR_IMAGES" ]; then echo "++++ Removing images: $CEDAR_IMAGES"; docker image rm $CEDAR_IMAGES; fi; \
 source ${CEDAR_DOCKER_DEPLOY}/bin/docker-create-network.sh; \
 source ${CEDAR_DOCKER_DEPLOY}/bin/docker-create-volumes.sh; \
 source ${CEDAR_DOCKER_DEPLOY}/bin/docker-copy-certificates.sh)

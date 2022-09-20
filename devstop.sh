@@ -9,3 +9,4 @@ source ./common.sh
 
 ./infrastop.sh
 ./microstop.sh
+pkill gulp
