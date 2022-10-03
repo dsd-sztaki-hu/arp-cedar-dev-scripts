@@ -7,6 +7,7 @@
 
 source ./common.sh
 
+check_node_version
 ./infrastart.sh
 ./microstart.sh "$@"
 ./guiinstall.sh &
