@@ -32,7 +32,7 @@ for i in "${IGNORRED[@]}"; do
 done
 
 echo "+++++ Services to start: $SERVICES_TO_START"
-echo "+++++ Services ignorred: ""${IGNORRED_SERVICES,,}"
+echo "+++++ Services ignorred: ""${IGNORRED_SERVICES}"
 
 # Make IGNORRED_SERVICES lowercase. startallbut uses lowercase names (just as startall)
 ( ./startallbut.sh "${IGNORRED_SERVICES}" ) &
