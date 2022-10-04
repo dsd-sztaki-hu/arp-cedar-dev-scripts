@@ -147,7 +147,7 @@ then
   cd ${CEDAR_DOCKER_HOME}
   git clone git@github.com:metadatacenter/cedar-development.git
   cd cedar-development
-  git checkout master
+  git checkout main
 
   printf "\n\n"
 else
@@ -164,7 +164,7 @@ then
   git clone https://github.com/metadatacenter/cedar-development
   cd cedar-development
   # Maybe develop branch
-  git checkout master
+  git checkout main
   cd ..
   cp cedar-development/bin/templates/set-env-internal.sh .
   cp cedar-development/bin/templates/set-env-external.sh .
