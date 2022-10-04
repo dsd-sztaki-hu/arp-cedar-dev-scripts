@@ -870,7 +870,10 @@ if [[ ! "$CEDAR_HOST" == "metadatacenter.orgx" ]]; then
 
   for d in `ls -d1 *.metadatacenter.orgx`; do
     # strip .metadatacenter.orgx/
-    d=${d::-20}
+    # bash 4.x only
+    #d=${d::-20}
+    # This should work in older bash as well:
+    d=`echo $d | sed 's/.\{20\}$//'`
     rm -rf "$d.$CEDAR_HOST"
     echo "++++ Creating $d.$CEDAR_HOST"
     mkdir $d.$CEDAR_HOST
