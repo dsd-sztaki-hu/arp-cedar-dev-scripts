@@ -170,15 +170,13 @@ then
   cp cedar-development/bin/templates/set-env-external.sh .
   cp cedar-development/bin/templates/cedar-profile-native-develop.sh .
 
-  echo adsasdadsa $CEDAR_DEVELOP_HOME
-
   # source it now to have gocedar
   shopt -s expand_aliases
   source ${CEDAR_HOME}/cedar-profile-native-develop.sh
   # gocedar should work here instead of the 'cd' but it doesn't
   cd ${CEDAR_HOME}
-  echo ${CEDAR_DEVELOP_HOME}/bin/util/git/git-clone-all.sh
-  ${CEDAR_DEVELOP_HOME}/bin/util/git/git-clone-all.sh
+  #echo ${CEDAR_DEVELOP_HOME}/bin/util/git/git-clone-all.sh
+  $CURRDIR/git-clone-all.sh
   # Maybe develop branch
   source ${CEDAR_HOME}/cedar-profile-native-develop.sh
   # cedargcheckout master
@@ -235,6 +233,8 @@ END
 
 echo "Press enter after commands added to .bashrc to continue!"
 read PRESSED
+
+cd $CURRDIR
 
 ./infrainstall.sh
 

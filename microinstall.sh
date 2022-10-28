@@ -3,10 +3,6 @@
 # Builds and configures the CEDAR microservices. Called from devinstall.sh.
 #
 
-# Remember where we started
-CURRDIR=`dirname "$0"`
-CURRDIR=`realpath $CURRDIR`
-
 source ./common.sh
 
 # We will use these aliases to configure approriate env vars for dev/docker environments

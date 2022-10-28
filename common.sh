@@ -54,3 +54,7 @@ then
 else
 	DOCKER_HOST=host.docker.internal
 fi
+
+# Remember where we started
+CURRDIR=`dirname "$0"`
+CURRDIR=`realpath $CURRDIR`

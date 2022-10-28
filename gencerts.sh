@@ -1,9 +1,5 @@
 #!/usr/bin/env -S bash -e
 
-# Remember where we started
-CURRDIR=`dirname "$0"`
-CURRDIR=`realpath $CURRDIR`
-
 source ./common.sh
 
 cd ${CEDAR_HOME}

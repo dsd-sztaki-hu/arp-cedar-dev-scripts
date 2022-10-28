@@ -3,10 +3,6 @@
 # Installs the infra in docker. Called from devinstall.sh.
 #
 
-# Remember where we started
-CURRDIR=`dirname "$0"`
-CURRDIR=`realpath $CURRDIR`
-
 source ./common.sh
 
 # We will use these aliases to configure approriate env vars for dev/docker environments
@@ -30,7 +26,6 @@ else
   printf "\n\n+++++ Installing docker configuration's ca.crt in ${JAVA_HOME}/lib/security/cacerts\n\n"
   cd $CEDAR_DOCKER_HOME/cedar-docker-deploy/cedar-assets/ca
   # pass: changeit
-    echo aaaaaaaaaaaa
   printf 'changeit\nyes\n' | keytool -import -alias $CEDAR_HOST -file ./ca.crt -keystore ${JAVA_HOME}/lib/security/cacerts
 fi
 
@@ -63,6 +58,9 @@ if [ ! -z "$CEDAR_IMAGES" ]; then echo "++++ Removing images: $CEDAR_IMAGES"; do
 source ${CEDAR_DOCKER_DEPLOY}/bin/docker-create-network.sh; \
 source ${CEDAR_DOCKER_DEPLOY}/bin/docker-create-volumes.sh; \
 source ${CEDAR_DOCKER_DEPLOY}/bin/docker-copy-certificates.sh)
+
+goinfrastructure
+docker compose build
 
 #printf "\n\n+++++ Starting cedar infrastructure\n\n"
 #
