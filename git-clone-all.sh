@@ -4,7 +4,10 @@
 # First we look up whether the repo https://github.com/dsd-sztaki-hu/<REPO_NAME> exists and clone it. If not, then
 # we clone from https://github.com/metadatacenter/<REPO_NAME>
 #
-source $CEDAR_UTIL_BIN/include-colors-and-header.sh "Cloning all CEDAR repos"
+echo ---------------------------------------------
+echo " Cloning all CEDAR repos"
+echo ---------------------------------------------
+echo
 source $CEDAR_UTIL_BIN/include-repo-list.sh
 # https://github.com/metadatacenter/cedar-messaging-server
 format="\n\nCloning Git repo status ${GREEN}%-32s${NORMAL} : (%-70s)\n"
