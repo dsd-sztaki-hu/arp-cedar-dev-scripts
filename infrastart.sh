@@ -35,7 +35,7 @@ printf "\n\n+++++ Starting cedar infrastructure\n\n"
 sleep 40
 
 # Check for running services 50 times
-for i in {1..30}; do
+for i in {1..50}; do
   checkss "MongoDB Elasticsearch-REST Elasticsearch-Transport NGINX Keycloak Neo4j Redis-persistent MySQL"
   if [[ $WAITING_FOR == "" ]]
   then

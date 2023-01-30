@@ -28,8 +28,8 @@ select user, host from user;
 END
 
 
+#if [ ! -d CEDAR/cedar-admin-tool/target ]; then
 printf "\n+++++ Building microservice parent\n\n"
-
 ceddev
 goparent
 mcit
@@ -39,6 +39,7 @@ printf "\n+++++ Building CEDAR microservices\n\n"
 createjaxb2workaround
 goproject
 mcit
+#fi
 
 # We are in some other dir, so cd back to our script dir
 cd $CURRDIR

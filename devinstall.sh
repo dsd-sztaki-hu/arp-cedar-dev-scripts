@@ -21,8 +21,11 @@ esac
 
 export CEDAR_DOCKER_HOME=${HOME}/CEDAR_DOCKER
 export CEDAR_HOME=${HOME}/CEDAR
-export CEDAR_BIOPORTAL_API_KEY_CONFIGURED="changeme-bbbb-cccc-dddd-eeeeeeeeeeee"
+export CEDAR_BIOPORTAL_API_KEY="CHANGEME-bbbb-cccc-dddd-eeeeeeeeeeee"
+export CEDAR_BIOPORTAL_REST_BASE="https://data.bioontology.org/"
+#export CEDAR_BIOPORTAL_REST_BASE="https://ontoportal-api.dsd.sztaki.hu/"
 export CEDAR_HOST="metadatacenter.orgx"
+export CEDAR_KEYCLOAK_HTTP_PORT=8080
 #CEDAR_DOCKER_HOME=./CEDAR_DOCKER
 #CEDAR_HOME=./CEDAR
 
@@ -71,15 +74,34 @@ then
 fi
 echo '$CEDAR_HOME': $CEDAR_HOME
 
-#
-echo -n "CEDAR_BIOPORTAL_API_KEY_CONFIGURED ($CEDAR_BIOPORTAL_API_KEY_CONFIGURED): "
-read CEDAR_BIOPORTAL_API_KEY_CONFIGURED_INPUT
+echo -n "CEDAR_BIOPORTAL_REST_BASE ($CEDAR_BIOPORTAL_REST_BASE): "
+read CEDAR_BIOPORTAL_REST_BASE_INPUT
 
-if [ ! -z "$CEDAR_BIOPORTAL_API_KEY_CONFIGURED_INPUT" ]
+if [ ! -z "$CEDAR_BIOPORTAL_REST_BASE_INPUT" ]
 then
-  CEDAR_BIOPORTAL_API_KEY_CONFIGURED=$CEDAR_BIOPORTAL_API_KEY_CONFIGURED_INPUT
+  CEDAR_BIOPORTAL_REST_BASE=$CEDAR_BIOPORTAL_REST_BASE_INPUT
 fi
-echo '$CEDAR_BIOPORTAL_API_KEY_CONFIGURED': $CEDAR_BIOPORTAL_API_KEY_CONFIGURED
+echo '$CEDAR_BIOPORTAL_REST_BASE': $CEDAR_BIOPORTAL_REST_BASE
+
+
+#
+echo -n "CEDAR_BIOPORTAL_API_KEY ($CEDAR_BIOPORTAL_API_KEY): "
+read CEDAR_BIOPORTAL_API_KEY_INPUT
+
+if [ ! -z "$CEDAR_BIOPORTAL_API_KEY_INPUT" ]
+then
+  CEDAR_BIOPORTAL_API_KEY=$CEDAR_BIOPORTAL_API_KEY_INPUT
+fi
+echo '$CEDAR_BIOPORTAL_API_KEY': $CEDAR_BIOPORTAL_API_KEY
+
+echo -n "CEDAR_KEYCLOAK_HTTP_PORT ($CEDAR_KEYCLOAK_HTTP_PORT): "
+read CEDAR_KEYCLOAK_HTTP_PORT_INPUT
+
+if [ ! -z "$CEDAR_KEYCLOAK_HTTP_PORT_INPUT" ]
+then
+  CEDAR_KEYCLOAK_HTTP_PORT=$CEDAR_KEYCLOAK_HTTP_PORT_INPUT
+fi
+echo '$CEDAR_KEYCLOAK_HTTP_PORT': $CEDAR_KEYCLOAK_HTTP_PORT
 
 
 # Determine platform for the appropriate branch
@@ -100,7 +122,9 @@ cat > .env.sh << END
 export CEDAR_HOST=$CEDAR_HOST
 export CEDAR_DOCKER_HOME=$CEDAR_DOCKER_HOME
 export CEDAR_HOME=$CEDAR_HOME
-export CEDAR_BIOPORTAL_API_KEY_CONFIGURED=$CEDAR_BIOPORTAL_API_KEY_CONFIGURED
+export CEDAR_BIOPORTAL_REST_BASE=$CEDAR_BIOPORTAL_REST_BASE
+export CEDAR_BIOPORTAL_API_KEY=$CEDAR_BIOPORTAL_API_KEY
+export CEDAR_KEYCLOAK_HTTP_PORT=$CEDAR_KEYCLOAK_HTTP_PORT
 export PLATFORM=$PLATFORM
 export BRANCH=arp-$PLATFORM
 END
@@ -130,6 +154,32 @@ function fix_cedar_host() {
   echo "++++ Updating userEventCallbackURL to call Resource server running at ${DOCKER_HOST}:9007 in ${CEDAR_DOCKER_HOME}/cedar-docker-build/cedar-keycloak/scripts/tools/listener.cli"
   perl -pi -e 's#\$\{env.CEDAR_NET_GATEWAY\}#'${DOCKER_HOST}'#g' ${CEDAR_DOCKER_HOME}/cedar-docker-build/cedar-keycloak/scripts/tools/listener.cli
 }
+
+function fix_bioportal_access()
+{
+  echo "++++ Setting CEDAR_BIOPORTAL_REST_BASE to $CEDAR_BIOPORTAL_REST_BASE in ${CEDAR_HOME}/set-env-internal.sh ${CEDAR_HOME}/set-env-external.sh"
+  perl -pi -e 's#export CEDAR_BIOPORTAL_REST_BASE=.*#export CEDAR_BIOPORTAL_REST_BASE='$CEDAR_BIOPORTAL_REST_BASE'#g' ${CEDAR_HOME}/set-env-internal.sh ${CEDAR_HOME}/cedar-development/bin/templates/set-env-internal.sh
+  perl -pi -e 's#export CEDAR_BIOPORTAL_REST_BASE=.*#export CEDAR_BIOPORTAL_REST_BASE='$CEDAR_BIOPORTAL_REST_BASE'#g' ${CEDAR_HOME}/set-env-external.sh ${CEDAR_HOME}/cedar-development/bin/templates/set-env-external.sh
+  perl -pi -e 's/export CEDAR_BIOPORTAL_API_KEY=.*/export CEDAR_BIOPORTAL_API_KEY='$CEDAR_BIOPORTAL_API_KEY'/g' ${CEDAR_HOME}/set-env-internal.sh ${CEDAR_HOME}/cedar-development/bin/templates/set-env-internal.sh
+  perl -pi -e 's/export CEDAR_BIOPORTAL_API_KEY=.*/export CEDAR_BIOPORTAL_API_KEY='$CEDAR_BIOPORTAL_API_KEY'/g' ${CEDAR_HOME}/set-env-external.sh ${CEDAR_HOME}/cedar-development/bin/templates/set-env-external.sh
+
+  echo "++++ Setting CEDAR_BIOPORTAL_REST_BASE to $CEDAR_BIOPORTAL_REST_BASE in ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/set-env-internal.sh ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/set-env-external.sh"
+  perl -pi -e 's#export CEDAR_BIOPORTAL_REST_BASE=.*#export CEDAR_BIOPORTAL_REST_BASE='$CEDAR_BIOPORTAL_REST_BASE'#g' ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/set-env-internal.sh
+  perl -pi -e 's#export CEDAR_BIOPORTAL_REST_BASE=.*#export CEDAR_BIOPORTAL_REST_BASE='$CEDAR_BIOPORTAL_REST_BASE'#g' ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/set-env-external.sh
+  perl -pi -e 's/export CEDAR_BIOPORTAL_API_KEY=.*/export CEDAR_BIOPORTAL_API_KEY='$CEDAR_BIOPORTAL_API_KEY'/g' ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/set-env-internal.sh
+  perl -pi -e 's/export CEDAR_BIOPORTAL_API_KEY=.*/export CEDAR_BIOPORTAL_API_KEY='$CEDAR_BIOPORTAL_API_KEY'/g' ${CEDAR_DOCKER_HOME}/cedar-development/bin/templates/set-env-external.sh
+}
+
+function fix_keycloak_port()
+{
+  echo "++++ Setting CEDAR_KEYCLOAK_HTTP_PORT to $CEDAR_KEYCLOAK_HTTP_PORT in ${CEDAR_HOME}/cedar-development/bin/util/set-env-generic.sh ${CEDAR_DOCKER_HOME}/cedar-development/bin/util/set-env-generic.sh"
+  perl -pi -e 's#export CEDAR_KEYCLOAK_HTTP_PORT=.*#export CEDAR_KEYCLOAK_HTTP_PORT='$CEDAR_KEYCLOAK_HTTP_PORT'#g' ${CEDAR_HOME}/cedar-development/bin/util/set-env-generic.sh ${CEDAR_DOCKER_HOME}/cedar-development/bin/util/set-env-generic.sh
+
+  echo "++++ Setting Keycloak port to $CEDAR_KEYCLOAK_HTTP_PORT in ${CEDAR_HOME}/cedar-development/bin/util/cedarstatus.sh ${CEDAR_DOCKER_HOME}/cedar-development/bin/util/cedarstatus.sh"
+  perl -pi -e 's#checkHttpResponse Keycloak .* (.*).*#checkHttpResponse Keycloak '$CEDAR_KEYCLOAK_HTTP_PORT' \1#g' ${CEDAR_HOME}/cedar-development/bin/util/cedarstatus.sh ${CEDAR_DOCKER_HOME}/cedar-development/bin/util/cedarstatus.sh
+
+}
+
 
 if [ ! -z "$OLD_ENV_SH" ]
 then
@@ -215,6 +265,9 @@ else
   # Make sure the host is updated
   fix_cedar_host
 fi
+
+fix_bioportal_access
+fix_keycloak_port
 
 # Generate .bashrc commands
 cat << END
