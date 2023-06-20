@@ -11,6 +11,9 @@
 trap '' INT
 trap "exit" INT
 
+# commit 55ccc0312bc2961776359f92625e60479ad834e4 (tag: release-2.6.19)
+export RELEASE_TAG=release-2.6.19
+
 # M1 with rosetta: Darwin beep-mbp.local 21.3.0 Darwin Kernel Version 21.3.0: Wed Jan  5 21:37:58 PST 2022; root:xnu-8019.80.24~20/RELEASE_ARM64_T6000 x86_64
 # M1 native: Darwin beep-mbp.local 21.3.0 Darwin Kernel Version 21.3.0: Wed Jan  5 21:37:58 PST 2022; root:xnu-8019.80.24~20/RELEASE_ARM64_T6000 arm64
 case `uname -a` in
@@ -240,7 +243,7 @@ then
   git clone https://github.com/metadatacenter/cedar-development
   cd cedar-development
   # Maybe develop branch
-  git checkout main
+  git checkout $RELEASE_TAG
   cd ..
   cp cedar-development/bin/templates/set-env-internal.sh .
   cp cedar-development/bin/templates/set-env-external.sh .

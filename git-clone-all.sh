@@ -19,11 +19,11 @@ function cloneRepo {
   TWO_HUNDRED=`curl -I https://github.com/dsd-sztaki-hu/$1 | head -1 | grep 200`
   if [ ! -z "$TWO_HUNDRED" ]
   then
-    echo "Cloning https://github.com/dsd-sztaki-hu/$1"
+    echo "Cloning https://github.com/dsd-sztaki-hu/$1 main"
     git -C "$CEDAR_HOME" clone https://github.com/dsd-sztaki-hu/$1
   else
-    echo "Cloning https://github.com/metadatacenter/$1"
-    git -C "$CEDAR_HOME" clone https://github.com/metadatacenter/$1
+    echo "Cloning https://github.com/metadatacenter/$1 with tag $RELEASE_TAG"
+    git -C "$CEDAR_HOME" clone --branch $RELEASE_TAG https://github.com/metadatacenter/$1
   fi
 
   git -C "$CEDAR_HOME/$1" status
