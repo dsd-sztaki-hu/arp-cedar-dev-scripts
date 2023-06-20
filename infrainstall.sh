@@ -62,6 +62,8 @@ source ${CEDAR_DOCKER_DEPLOY}/bin/docker-copy-certificates.sh)
 goinfrastructure
 # Don't use buildkit. This causes problems on M1 for now
 export DOCKER_BUILDKIT=0
+#docker compose build mongo
+export DOCKER_DEFAULT_PLATFORM=linux/amd64
 docker compose build
 
 #printf "\n\n+++++ Starting cedar infrastructure\n\n"
